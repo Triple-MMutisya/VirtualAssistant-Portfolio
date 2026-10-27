@@ -39,3 +39,78 @@ document.addEventListener("DOMContentLoaded", () => {
     showAll.textContent = expanded ? "Show Less ↑" : "View All Projects →";
   });
 });
+
+const imageModal = document.getElementById("imageModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalGallery = document.getElementById("modalGallery");
+const closeModalButton = document.getElementById("closeModal");
+
+let lastFocusedButton = null;
+
+document.querySelectorAll(".tag").forEach(button => {
+  button.addEventListener("click", () => {
+    lastFocusedButton = button;
+    modalTitle.textContent = button.dataset.title;
+    modalGallery.replaceChildren();
+
+    const images = button.dataset.images.split(",");
+
+    images.forEach((src, index) => {
+      const figure = document.createElement("figure");
+      const img = document.createElement("img");
+      const caption = document.createElement("figcaption");
+
+      img.src = src.trim();
+      img.alt = `${button.dataset.title}, image ${index + 1}`;
+      img.loading = "lazy";
+
+      img.addEventListener("error", () => {
+        caption.textContent =
+          `Image not found: ${src.trim()}. Add the image to your project-images folder.`;
+        caption.style.color = "#b42318";
+        img.style.display = "none";
+      });
+
+      caption.textContent = `Project image ${index + 1}`;
+
+      // Open the full-size image in a separate tab.
+      img.style.cursor = "zoom-in";
+      img.addEventListener("click", () => {
+        if (img.naturalWidth > 0) {
+          window.open(img.src, "_blank", "noopener,noreferrer");
+        }
+      });
+
+      figure.append(img, caption);
+      modalGallery.appendChild(figure);
+    });
+
+    imageModal.hidden = false;
+    document.body.style.overflow = "hidden";
+    closeModalButton.focus();
+  });
+});
+
+function closeProjectModal() {
+  imageModal.hidden = true;
+  document.body.style.overflow = "";
+  modalGallery.replaceChildren();
+
+  if (lastFocusedButton) {
+    lastFocusedButton.focus();
+  }
+}
+
+closeModalButton.addEventListener("click", closeProjectModal);
+
+imageModal.addEventListener("click", event => {
+  if (event.target === imageModal) {
+    closeProjectModal();
+  }
+});
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape" && !imageModal.hidden) {
+    closeProjectModal();
+  }
+});
