@@ -1,3 +1,26 @@
+document.addEventListener("DOMContentLoaded", function () {
+    const emailLink = document.getElementById("emailLink");
+
+    if (emailLink) {
+        emailLink.addEventListener("click", function (event) {
+            event.preventDefault();
+
+            const recipient = "nedy.mutisya@gmail.com";
+            const subject = "Virtual Assistant Project Enquiry";
+            const body =
+                "Hello Kennedy,\n\n" +
+                "I would like to discuss your Virtual Assistant services.";
+
+            const mailto =
+                "mailto:" + recipient +
+                "?subject=" + encodeURIComponent(subject) +
+                "&body=" + encodeURIComponent(body);
+
+            window.location.href = mailto;
+        });
+    }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   if (window.lucide) window.lucide.createIcons();
 
